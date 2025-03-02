@@ -38,4 +38,8 @@ if __name__ == "__main__":
     print("Librarian of Central Library:", get_librarian_for_library("Central Library"))
 
 
+<<<<<<< HEAD
 ["Author.objects.get(name=author_name)", "objects.filter(author=author)"]
+=======
+["Author.objects.get(name=author_name)", "objects.filter(author=author)"]
+>>>>>>> 794c5e0fc955590fd758ec54bbc36f257bf5deec
