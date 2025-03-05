@@ -56,7 +56,10 @@ ROOT_URLCONF = 'LibraryProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-       'DIRS': [BASE_DIR / "templates"],
+       'DIRS': [ BASE_DIR / "templates",
+                BASE_DIR / "relationship_app/templates",
+                BASE_DIR / "templates/registration",
+                ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,3 +126,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Authentication Settings
+LOGIN_URL =   '/login/'
+LOGIN_REDIRECT_URL = '/librarian-dashboard/'
+  # Adjust based on your dashboard URL
+LOGOUT_REDIRECT_URL = '/'

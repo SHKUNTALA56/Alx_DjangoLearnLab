@@ -1,27 +1,25 @@
-"""
-URL configuration for LibraryProject project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
-from relationship_app.views import list_books, LibraryDetailView
+from relationship_app import views  # Import the views module
+from relationship_app.views import librarian_dashboard_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('books/', list_books, name='list_books'),  # Function-based view
-    path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),  # Class-based view
-    path('', include('relationship_app.urls')),  
-]
+    path('', views.home_view, name='home'),  # Home page
+    path('admin/', admin.site.urls),  # Admin panel
 
+    # Book-related paths
+    path('books/', views.list_books, name='list_books'),  # Function-based view
+    path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),  # Class-based view
+
+    # Role-based views
+    path('admin-page/', views.admin_view, name='admin_view'),
+    path('librarian-page/', views.librarian_view, name='librarian_view'),
+    path('member-page/', views.member_view, name='member_view'),
+    path('librarian-dashboard/', views.librarian_dashboard_view, name='librarian_dashboard'),
+
+    # Include authentication URLs
+    path('accounts/', include('django.contrib.auth.urls')),
+
+    # Including additional app-specific URLs
+    path('relationship/', include('relationship_app.urls')),
+]
