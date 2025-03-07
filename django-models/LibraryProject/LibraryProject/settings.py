@@ -128,7 +128,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication Settings
-LOGIN_URL =   '/login/'
+LOGIN_URL =   '/relationship/login/'
 LOGIN_REDIRECT_URL = '/librarian-dashboard/'
   # Adjust based on your dashboard URL
 LOGOUT_REDIRECT_URL = '/'
