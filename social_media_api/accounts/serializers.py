@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from .models import CustomUser
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
+
+
+CustomUser = get_user_model()
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Serializer for retrieving user details and registration"""
@@ -16,8 +20,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Override create method to hash password and generate token"""
         followers = validated_data.pop('followers', [])  # Extract followers if provided
-        user = CustomUser.objects.create_user(**validated_data)  # Hashes password automatically
-
+        user = get_user_model().objects.create_user(**validated_data)
+        
         user.followers.set(followers)  # Set followers if provided
         Token.objects.create(user=user)  # Create a token for new users
         return user
