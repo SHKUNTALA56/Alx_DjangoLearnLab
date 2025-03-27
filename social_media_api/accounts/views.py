@@ -24,43 +24,31 @@ User = get_user_model()
 
 # Create your views here.
 
-class FollowUserView(APIView):
-    """Allow users to follow/unfollow another user with a single request."""
-    
-    permission_classes = [permissions.IsAuthenticated]
+class FollowUserView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
 
-    def patch(self, request, *args, **kwargs):
-        """Follow or unfollow a user based on their current status."""
-        
-        try:
-            user_to_follow = CustomUser.objects.get(id=kwargs['user_id'])
-        except CustomUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(CustomUser, id=user_id)
+        if user_to_follow != request.user:
+            if request.user.followers.filter(id=user_to_follow.id).exists():
+                request.user.followers.remove(user_to_follow)
+                return Response({"message": "Unfollowed"}, status=status.HTTP_200_OK)
+            else:
+                request.user.followers.add(user_to_follow)
+                return Response({"message": "Followed"}, status=status.HTTP_200_OK)
+        return Response({"message": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if user_to_follow == request.user:
-            return Response({"message": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if request.user.following.filter(id=user_to_follow.id).exists():
-            request.user.following.remove(user_to_follow)
-            return Response({"message": "Unfollowed"}, status=status.HTTP_200_OK)
-        else:
-            request.user.following.add(user_to_follow)
-            return Response({"message": "Followed"}, status=status.HTTP_200_OK)
-
-
+# Custom Token Authentication View
 @api_view(['POST'])
 def get_auth_token(request):
-    """Custom obtain auth token endpoint."""
-    
     view = ObtainAuthToken.as_view()
     response = view(request)
-    
-    # Ensure successful authentication before returning response
-    if response.status_code == 200 and 'token' in response.data:
-        user = Token.objects.get(key=response.data['token']).user
-        return Response({'token': response.data['token'], 'user_id': user.id})
-    
+    if 'token' in response.data:
+        return Response({'token': response.data['token'], 'user_id': request.user.id})
     return response
+
 class UnfollowUserView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FollowSerializer
