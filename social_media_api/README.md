@@ -136,3 +136,119 @@ class CustomUser(AbstractUser):
 
 For any issues, please open a GitHub issue or reach out to the maintainer. 🚀
 
+1️⃣ Create a Post
+
+URL: POST /api/posts/
+
+Headers:
+
+{
+    "Authorization": "Token your_generated_token"
+}
+
+Request Body:
+
+{
+    "title": "My First Post",
+    "content": "This is my first post content."
+}
+
+Response:
+
+{
+    "id": 1,
+    "author": "john_doe",
+    "title": "My First Post",
+    "content": "This is my first post content.",
+    "created_at": "2025-03-24T12:00:00Z",
+    "updated_at": "2025-03-24T12:00:00Z"
+}
+
+2️⃣ Get All Posts (Paginated)
+
+URL: GET /api/posts/?page=1
+
+Headers:
+
+{
+    "Authorization": "Token your_generated_token"
+}
+
+Response:
+
+{
+    "count": 100,
+    "next": "http://127.0.0.1:8000/api/posts/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "author": "john_doe",
+            "title": "My First Post",
+            "content": "This is my first post content.",
+            "created_at": "2025-03-24T12:00:00Z",
+            "updated_at": "2025-03-24T12:00:00Z"
+        }
+    ]
+}
+
+3️⃣ Update a Post
+
+URL: PUT /api/posts/1/
+
+Headers:
+
+{
+    "Authorization": "Token your_generated_token"
+}
+
+Request Body:
+
+{
+    "title": "Updated Post Title",
+    "content": "Updated post content."
+}
+
+4️⃣ Delete a Post
+
+URL: DELETE /api/posts/1/
+
+Headers:
+
+{
+    "Authorization": "Token your_generated_token"
+}
+
+📝 Comment API Endpoints
+
+1️⃣ Create a Comment
+
+URL: POST /api/comments/
+
+Headers:
+
+{
+    "Authorization": "Token your_generated_token"
+}
+
+Request Body:
+
+{
+    "post": 1,
+    "content": "This is a comment."
+}
+
+2️⃣ Get Comments for a Post
+
+URL: GET /api/comments/
+
+3️⃣ Update a Comment
+
+URL: PUT /api/comments/1/
+
+4️⃣ Delete a Comment
+
+URL: DELETE /api/comments/1/
+
+For any issues, please open a GitHub issue or reach out to the maintainer. 🚀
+
