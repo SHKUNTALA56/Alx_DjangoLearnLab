@@ -1,16 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-
-#create a custom user model
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-
 class CustomUser(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    followers = models.ManyToManyField('self', symmetrical=False, related_name='following')
 
     groups = models.ManyToManyField(
         "auth.Group",
@@ -25,3 +18,18 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        CustomUser, related_name="following_relations", on_delete=models.CASCADE
+    )
+    following = models.ForeignKey(
+        CustomUser, related_name="follower_relations", on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')  # Prevent duplicate follows
+
+    def __str__(self):
+        return f"{self.follower.username} follows {self.following.username}"

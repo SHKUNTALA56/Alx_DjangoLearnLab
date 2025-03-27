@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Follow
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 
@@ -31,3 +31,14 @@ class LoginSerializer(serializers.Serializer):
     
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
+
+class FollowSerializer(serializers.ModelSerializer):
+    follower = serializers.SlugRelatedField(slug_field="username", queryset=CustomUser.objects.all())
+    following = serializers.SlugRelatedField(slug_field="username", queryset=CustomUser.objects.all())
+
+    class Meta:
+        model = Follow
+        fields = ['id', 'follower', 'following', 'created_at']
+        extra_kwargs = {
+            'follower': {'read_only': True},  # The follower should be set from the request user
+        }

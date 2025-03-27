@@ -252,3 +252,129 @@ URL: DELETE /api/comments/1/
 
 For any issues, please open a GitHub issue or reach out to the maintainer. 🚀
 
+Unfollow a User
+POST /api/unfollow/{user_id}/
+Allows the authenticated user to unfollow another user.
+
+Request:
+
+json
+Copy
+Edit
+{
+    "action": "unfollow"
+}
+Response:
+
+json
+Copy
+Edit
+{
+    "message": "You have unfollowed user_id."
+}
+Errors:
+
+400 Bad Request if the user was not being followed.
+
+404 Not Found if the target user does not exist.
+
+3. Get User's Followers
+GET /api/user/{user_id}/followers/
+Retrieves a list of followers for a user.
+
+Response:
+
+json
+Copy
+Edit
+{
+    "followers": [
+        {
+            "id": 2,
+            "username": "john_doe",
+            "profile_picture": "https://example.com/profile_pics/john.jpg"
+        },
+        {
+            "id": 3,
+            "username": "jane_smith",
+            "profile_picture": "https://example.com/profile_pics/jane.jpg"
+        }
+    ]
+}
+3.4 Get User's Following List
+GET /api/user/{user_id}/following/
+Retrieves a list of users that the specified user is following.
+
+Response:
+
+json
+Copy
+Edit
+{
+    "following": [
+        {
+            "id": 5,
+            "username": "mike_jones",
+            "profile_picture": "https://example.com/profile_pics/mike.jpg"
+        }
+    ]
+}
+3. Get User Feed
+GET /api/user/feed/
+Fetches a personalized feed from followed users.
+
+Response:
+
+json
+Copy
+Edit
+{
+    "feed": [
+        {
+            "post_id": 10,
+            "author": "jane_smith",
+            "content": "New blog post is up!",
+            "created_at": "2025-03-24T12:00:00Z"
+        },
+        {
+            "post_id": 15,
+            "author": "john_doe",
+            "content": "Great weather today!",
+            "created_at": "2025-03-24T14:30:00Z"
+        }
+    ]
+}
+4. Model Changes
+4.1 CustomUser Model Updates
+Added followers and following ManyToMany relationships.
+
+Introduced the Follow model for a more structured following system.
+
+4.2 Follow Model
+python
+Copy
+Edit
+class Follow(models.Model):
+    follower = models.ForeignKey(CustomUser, related_name="following_relations", on_delete=models.CASCADE)
+    following = models.ForeignKey(CustomUser, related_name="follower_relations", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+
+    def __str__(self):
+        return f"{self.follower.username} follows {self.following.username}"
+5. Notes
+Ensure migrations are applied:
+
+sh
+Copy
+Edit
+python manage.py makemigrations
+python manage.py migrate
+The feed system can be expanded to include more content types like images and videos.
+
+Rate limiting can be implemented to prevent spam.
+
+
+
