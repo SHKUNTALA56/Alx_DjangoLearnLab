@@ -7,7 +7,9 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
-from accounts.models import CustomUser  # Import the user model
+from accounts.models import CustomUser, Follow  # Import the user model
+from rest_framework.permissions import IsAuthenticated
+
 
 user = CustomUser
 
@@ -48,20 +50,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 class UserFeedView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        """Fetch posts from users the current user follows"""
+        """Retrieve posts from users the authenticated user follows."""
         user = request.user
 
-        # Get the users that the authenticated user follows
-        followed_users = user.following.all()  # Assuming "following" is the related_name for follows
+        # Get the list of users the authenticated user follows
+        following_users = Follow.objects.filter(follower=user).values_list('following', flat=True)
 
-        # Fetch posts from followed users and order them by creation date (newest first)
-        posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
+        # Get posts from those users, ordered by most recent
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
 
-        # Serialize the posts
         serializer = PostSerializer(posts, many=True)
-
-        return Response(serializer.data)        
+        return Response({"feed": serializer.data})      
 
