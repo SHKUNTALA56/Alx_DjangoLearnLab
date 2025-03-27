@@ -57,7 +57,7 @@ class UserFeedView(APIView):
         user = request.user
 
         # Get the list of users the authenticated user follows
-        following_users = Follow.objects.filter(follower=user).values_list('following', flat=True)
+        following_users = user.following.all()
 
         # Get posts from those users, ordered by most recent
         posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
