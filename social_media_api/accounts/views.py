@@ -14,6 +14,7 @@ from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
+from notifications.models import Notification
 
 
 
@@ -95,6 +96,7 @@ class LogoutView(APIView):
         return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
+
     """API for retrieving and updating user profile"""
     
     queryset = CustomUser.objects.all()
@@ -102,4 +104,33 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
+
         return self.request.user  # Get the logged-in user profile
+    
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        user = request.user
+        try:
+            target_user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if user == target_user:
+            return Response({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+
+        follow, created = Follow.objects.get_or_create(follower=user, following=target_user)
+
+        if created:
+            # Generate a notification
+            Notification.objects.create(
+                recipient=target_user,
+                actor=user,
+                verb="started following you"
+            )
+
+            return Response({"message": "User followed"}, status=status.HTTP_201_CREATED)
+        else:
+            follow.delete()
+            return Response({"message": "User unfollowed"}, status=status.HTTP_200_OK)    

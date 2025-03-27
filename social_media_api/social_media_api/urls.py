@@ -28,4 +28,5 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('api/auth', include('accounts.urls')),
     path('api/', include('posts.urls')),
+    path("notifications/", include("notifications.urls")), 
 ]

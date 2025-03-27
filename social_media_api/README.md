@@ -377,4 +377,153 @@ The feed system can be expanded to include more content types like images and vi
 Rate limiting can be implemented to prevent spam.
 
 
+Likes & Notifications System
+This documentation outlines the API endpoints for the Like System and Notifications System in the social media API.
+
+1. Like System
+Users can like and unlike posts, and the system will generate notifications for post owners when their posts are liked.
+
+1.1 Like a Post
+Endpoint:
+POST /posts/<int:post_id>/like/
+
+Request Headers:
+
+json
+Copy
+Edit
+{
+  "Authorization": "Bearer <your_token>"
+}
+Response (Success - 201 Created):
+
+json
+Copy
+Edit
+{
+  "message": "Post liked successfully",
+  "post_id": 12,
+  "liked_by": "john_doe"
+}
+Response (Already Liked - 400 Bad Request):
+
+json
+Copy
+Edit
+{
+  "error": "You have already liked this post"
+}
+1.2 Unlike a Post
+Endpoint:
+POST /posts/<int:post_id>/unlike/
+
+Request Headers:
+
+json
+Copy
+Edit
+{
+  "Authorization": "Bearer <your_token>"
+}
+Response (Success - 200 OK):
+
+json
+Copy
+Edit
+{
+  "message": "Post unliked successfully",
+  "post_id": 12,
+  "unliked_by": "john_doe"
+}
+Response (Not Liked Before - 400 Bad Request):
+
+json
+Copy
+Edit
+{
+  "error": "You haven't liked this post"
+}
+2. Notifications System
+The system sends notifications when:
+
+A user gets a new follower.
+
+Someone likes their post.
+
+Someone comments on their post.
+
+2.1 Get User Notifications
+Endpoint:
+GET /notifications/
+
+Request Headers:
+
+json
+Copy
+Edit
+{
+  "Authorization": "Bearer <your_token>"
+}
+Response (Success - 200 OK):
+
+json
+Copy
+Edit
+[
+  {
+    "id": 1,
+    "recipient": "john_doe",
+    "actor": "jane_doe",
+    "verb": "liked your post",
+    "timestamp": "2025-03-24T10:15:30Z",
+    "is_read": false
+  },
+  {
+    "id": 2,
+    "recipient": "john_doe",
+    "actor": "mark_smith",
+    "verb": "commented on your post",
+    "timestamp": "2025-03-24T09:45:10Z",
+    "is_read": true
+  }
+]
+2.2 Mark a Notification as Read
+Endpoint:
+POST /notifications/<int:notification_id>/read/
+
+Request Headers:
+
+json
+Copy
+Edit
+{
+  "Authorization": "Bearer <your_token>"
+}
+Response (Success - 200 OK):
+
+json
+Copy
+Edit
+{
+  "message": "Notification marked as read",
+  "notification_id": 1
+}
+Response (Already Read - 400 Bad Request):
+
+json
+Copy
+Edit
+{
+  "error": "Notification is already marked as read"
+}
+User Interaction & Engagement Benefits
+Improved User Experience: Users stay informed about interactions.
+
+Increased Engagement: Encourages likes, comments, and follows.
+
+Real-Time Updates: Users receive immediate feedback on activities.
+
+✅ This API enhances social interaction by making notifications and likes seamless! 
+
+
 

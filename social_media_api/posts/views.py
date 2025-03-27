@@ -1,14 +1,16 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from .models import Post, Comment
+from .models import Post, Comment,Like
 from .serializers import PostSerializer, CommentSerializer
 from accounts.models import CustomUser, Follow  # Import the user model
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.contenttypes.models import ContentType
+from notifications.models import Notification
 
 
 user = CustomUser
@@ -65,3 +67,31 @@ class UserFeedView(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response({"feed": serializer.data})      
 
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        user = request.user
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        like, created = Like.objects.get_or_create(user=user, post=post)
+
+        if created:
+            # Generate a notification
+            if post.author != user:
+                Notification.objects.create(
+                    recipient=post.author,
+                    actor=user,
+                    verb="liked your post",
+                    content_type=ContentType.objects.get_for_model(post),
+                    object_id=post.id
+                )
+
+            return Response({"message": "Post liked"}, status=status.HTTP_201_CREATED)
+        else:
+            like.delete()
+            return Response({"message": "Like removed"}, status=status.HTTP_200_OK)
