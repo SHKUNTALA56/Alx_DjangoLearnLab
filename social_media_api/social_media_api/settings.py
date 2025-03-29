@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-fu)1^ql0&z-2+ij!6(visevijtr49xvt#(21@68i*rh=!#d7s*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -112,9 +112,9 @@ DATABASES = {
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_SSL_REDIRECT = True  # Ensure you have HTTPS
-CSRF_COOKIE_SECURE = True  # Enable only if using HTTPS
-SESSION_COOKIE_SECURE = True  # Enable only if using HTTPS
+SECURE_SSL_REDIRECT = False  # Ensure you have HTTPS
+CSRF_COOKIE_SECURE = False    # Enable only if using HTTPS
+SESSION_COOKIE_SECURE = False  # Enable only if using HTTPS
 
 # Static and Media Files
 STATIC_URL = "/static/"
