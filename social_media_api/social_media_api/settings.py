@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +27,7 @@ SECRET_KEY = 'django-insecure-fu)1^ql0&z-2+ij!6(visevijtr49xvt#(21@68i*rh=!#d7s*
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -94,10 +96,33 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("MYSQL_DATABASE", "social_media_db"),
+        'USER': os.getenv("MYSQL_USER", "root"),
+        'PASSWORD': os.getenv("MYSQL_PASSWORD", "Diagnostic_56"),
+        'HOST': os.getenv("MYSQL_HOST", "127.0.0.1"),
+        'PORT': os.getenv("MYSQL_PORT", "3306"),
     }
 }
+
+
+
+
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True  # Ensure you have HTTPS
+CSRF_COOKIE_SECURE = True  # Enable only if using HTTPS
+SESSION_COOKIE_SECURE = True  # Enable only if using HTTPS
+
+# Static and Media Files
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+
 
 
 # Password validation

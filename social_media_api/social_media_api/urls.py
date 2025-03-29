@@ -18,15 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
 
-
 def home_view(request):
     return JsonResponse({"message": "Welcome to the Social Media API!", "status": "OK"})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
-    path('', home_view, name='home'),
-    path('api/auth', include('accounts.urls')),
-    path('api/', include('posts.urls')),
-    path("notifications/", include("notifications.urls")), 
+    path('', home_view, name='home'),  # Set root URL to home_view
+    path('api/auth/', include('accounts.urls')),  # Ensure trailing slash
+    path('api/', include('posts.urls')),  # API endpoints for posts
+    path("notifications/", include("notifications.urls")),  # Notifications
 ]
+
