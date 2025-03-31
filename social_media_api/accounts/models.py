@@ -5,8 +5,9 @@ class CustomUser(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
+    # Modify the 'followers' field to have a unique related_name
     followers = models.ManyToManyField(
-        "self", symmetrical=False, related_name="following", blank=True
+        "self", symmetrical=False, related_name="followed_by", blank=True
     )
 
     groups = models.ManyToManyField(
@@ -24,11 +25,12 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Follow(models.Model):
+    # Modify the 'follower' and 'following' fields to have unique related_names
     follower = models.ForeignKey(
-        CustomUser, related_name="following", on_delete=models.CASCADE
+        CustomUser, related_name="following_relations", on_delete=models.CASCADE
     )
     following = models.ForeignKey(
-        CustomUser, related_name="followers", on_delete=models.CASCADE
+        CustomUser, related_name="follower_relations", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
