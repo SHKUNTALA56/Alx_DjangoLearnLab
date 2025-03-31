@@ -20,8 +20,9 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Follow(models.Model):
-    follower = models.ForeignKey(
-        CustomUser, related_name="following_relations", on_delete=models.CASCADE
+    
+    followers = models.ManyToManyField(
+        "self", symmetrical=False, related_name="following", blank=True
     )
     following = models.ForeignKey(
         CustomUser, related_name="follower_relations", on_delete=models.CASCADE
